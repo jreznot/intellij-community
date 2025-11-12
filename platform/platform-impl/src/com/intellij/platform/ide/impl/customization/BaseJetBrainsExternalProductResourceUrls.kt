@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.updateSettings.impl.PatchInfo
 import com.intellij.openapi.updateSettings.impl.UpdateRequestParametersProvider
 import com.intellij.openapi.util.BuildNumber
+import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.platform.ide.customization.ExternalProductResourceUrls
 import com.intellij.platform.ide.customization.FeedbackReporter
 import com.intellij.util.Url
@@ -190,4 +191,39 @@ internal fun computePatchFileName(from: BuildNumber, to: BuildNumber): String {
 internal fun computeCustomPatchDownloadUrl(from: BuildNumber, to: BuildNumber): Url? {
   val customPatchesUrl = System.getProperty("idea.patches.url") ?: return null
   return Urls.newFromEncoded(customPatchesUrl).resolve(computePatchFileName(from, to))
+}
+
+open class BaseIntelliJIdeaExternalResourceUrls : BaseJetBrainsExternalProductResourceUrls() {
+  override val basePatchDownloadUrl: Url
+    get() = Urls.newFromEncoded("https://download.jetbrains.com/idea/")
+
+  override val productPageUrl: Url
+    get() = baseWebSiteUrl.resolve("idea/")
+
+  override val youtrackProjectId: String
+    get() = "IDEA"
+
+  override val shortProductNameUsedInForms: String
+    get() = "IDEA"
+
+  override val useInIdeGeneralFeedback: Boolean
+    get() = true
+
+  override val useInIdeEvaluationFeedback: Boolean
+    get() = true
+
+  override val youTubeChannelUrl: Url
+    get() = Urls.newFromEncoded("https://www.youtube.com/user/intellijideavideo")
+
+  override val keyboardShortcutsPdfUrl: Url
+    get() {
+      val suffix = if (SystemInfoRt.isMac) "_Mac" else ""
+      return baseWebSiteUrl.resolve("idea/docs/IntelliJIDEA_ReferenceCard$suffix.pdf")
+    }
+
+  override val gettingStartedPageUrl: Url
+    get() = baseWebSiteUrl.resolve("idea/resources/")
+
+  override val baseWebHelpUrl: Url
+    get() = baseWebSiteUrl.resolve("help/idea/")
 }
